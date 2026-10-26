@@ -108,3 +108,116 @@ class MainPage(webapp.RequestHandler):
 application = webapp.WSGIApplication([ ('.*', MainPage), ], debug=False)
 ```
 
+The game attemps to block external scripts by checking the textual URL prefic rather than validationg the browser-resolved destination's origin.
+
+In previous levels you would see something like 
+
+```
+window.location.origin
+```
+## Test
+
+I created a page at xss_excersize/executable_payload/payload.js and published the page as a static page on github.
+
+### payload.js
+
+```javascript
+alert(1);
+``` 
+
+## Results
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>Success!</title>
+    <link type="text/css" rel="stylesheet" href="/static/game.css" />
+    <script src="/static/game.js"></script>
+
+
+  </head>
+  <body id=game-done>
+    <h1 id="level-title">Congratulations!</h1>
+
+    <div id="instructions">
+    <pre>
+                                                         -oooo:-                                                        
+                                                        omhsoosho`                                                      
+                                                        Ndo:``:oh-                                                      
+                                                        dms+--+ym:                                                      
+                                                        -ymhohdh+`                                                      
+                                                         `N/`.s.                                                        
+                                                          +:  +                                                         
+                                                          --  :                                                         
+                                                          --  o                                                         
+                                                          ..  +                                                         
+                                                          ::  s        ..`                                              
+                                                .:sssso.  --  +     :syhhyo`                                            
+                                ..::::.       `odhhyyhdd. ::  s    .mhhyhhdh.       -:...`                              
+                               /dhhhhhhs     .odddhyhdddh+y:  my-syhdhhyhhddy/`   .odhyyhh:                             
+                              yNdhyyoyhmo+::+ms/+++//++/odm:  NNmNd+///+++/+ody::omhyssyhdm-                            
+                            -sddyyyyyyyoommmmmmdhyyyyyyhddd: `ddmdmdhyssyyhhmmNNNNdhyyyyyhmo-`                          
+                        ``-omdyyyssys///shdddddddddmmdddhyy-``yhddddhhhhhdmmmmmmdd/oyssyyyyhmhss-`                      
+                     `:ohhdmddhhyyyyyshddddhhyyyyyhddhhyo:-...--shhyysssyyhhdhhhddyyysyyyhdddmNNmyo.                    
+                    /hNNmmd/:o+/////:`/osyhhyyys+syyhhyysysooossyyyyyooyyyyyyysyy+./oooooos/:ydNNmNmo.                  
+                   +dNmmmmmhoo+///////oossshhyyyyyyyyssoossoosoosssyyyyyyyhsoyyyys/:-..--:/+sdddmmmNMy                  
+                  `hNmmdmmdmddddhhhyhysso+.oyssssso-./o:-/+oo++oo--osoooooo..oyyhyyyyyyhhhyhdddmmdmNNN                  
+                  `yNmNNhhdmdddhhhyyyyyyys:-......`./+++/:o++oo++/-````..::/+sysysyyyhsshhhydddmmmNNNN                  
+                   sMNNNNNNmmdmdhhhhyyyyyyhhssssoo+oo/+//:/+//+:++++ooosyooyssosyyhhyhsshdhdmmNmNmmMMN                  
+                   -NNNNNNhmNmdmmmdddddmhhhyyyyssys///+/:://////o+osoo+osoossosyhhdddh+omddmNNmmNmNMMN                  
+                   oMNNNNNNNNdydNmmmmmdhydhhsoooodhydhsshys+soyooooosssyhyhymdhdhyddmmmdmNNNNNNmNNNMMM                  
+                   yMMNNNMmmNdmmNNNNNNmh/sysyysyhyddmhhyhyhhddyyyhmddhhdmdddmmmdmmmmNNmmmNmNNNNmMNMMMM                  
+                  .dMMNNMMNNNmNNNNNNmmNNhsddddNNdmhdmddyyhdhdhdddhdmhhdddhmddmmmNNNNNNNNNNNNNNNNMNMMMM                  
+                  :NMMMNMMNMNhhmNNNNmdmNNmhddmdNmmmmmmddddNmdhdhddddmddmmmmmmNdNmdmmNNNmNNNNNdmMMMMMMM                  
+                  -mMMMMMNNmNNmNNNNNNNNNNNdmmNmNmNmNmmNNmmNNdhddmmmmNmhhhyohNMNMNmmmmNdmNNMMMNNMMMMMMM                  
+                  .dMMMMMMNNNMMMMMNNNNNMNmmmNNNmmmmNNdddmmNNNmmdNNmNNNmmNNNNNNNNNNNNNNNmNNNNNmNMMMMMMM                  
+                  :NMMMMMMMMMMMMMMMNmmNMNNNNNNNmmNmNNNNmdmNNNNNNNmNNdmNNMMNMmNNNNNNMMNdmNNNMNmmMMMMMMM                  
+                  :NNMMMMMMMMMMMMMMMMNNMNNMNNNMMMNNNNNNmNmdmmmNNNNNNmmNNNNNNNNNNMNNMMMNNNNMMNmMMMMNNMN                  
+                  :NMMMNNMMMMMMMMMMMMMNNMMMMNMMMNmNNMNNNNNmhNMNNMNNNMMNMMMMMNNMMNNNMNMMMMNMMNNMMNMNMMM                  
+                  `hMMMNdMNNMNNNNNMMNNNNMMMMMMMMNmNMMMMNNNNNNNdmmmMNMMMMMMNNMMNmdNMMNMNNNNMNmmNMNMMMMN                  
+                   yMMMMNMMNMNmmNNNMNmddmMMNNNMNNNNNMMNNNNMNNNNNNNmNNNNNNNNNNNNNddNdmdmmNNMNNdMMMMMMMN                  
+                   yMMMMNMNMMNNMMNNNNmdmmNMNNdhmMNNNNNNmNMMddddmNNNmNNMMNmNmmmmmNNmmmmNMMMMMMNNNMMMMMN                  
+                   yNNNMMNNMMMMMMNNNNNMmmdNNNNNNNNNNNNmNNNNNmNmmNNNNNNNNNNNmNmNNNNNNNNNNNNNMMMNNMMMMMy                  
+                   +MMMMMMMMMMMNNNNMMMNNNNmNNNMNMNNMNNmhdNNNNNmNNNmmNNNNNNNNNNNMMNNmNNNNNMNMNMMMMMMMN:                  
+                    NMMMMNMMMMMMMNNNNNNdNMNNNNNNmNNNNNNNNNmmhNNNNmdNNNNNNNNNMMNNMNNNNNNNNNMMMMNNMMMNs`                  
+                    -sdmNMNNMMMMMNNNNmmmmNNNMNmNMNNNNNNNMNmNNNNNNmmmdmNNNMNmmmmNMNNMNMmmNNMMMNMNmd+-`                   
+                      `.ohNNMMNMMNMNNmdmNNNNNNmNMNNMNNNNmNNNmmmNmNMMNNMNNMMNNNNNNNNNNMMMMMMMNNho.`                      
+                          :+hdNNNNNNNNNNNNNNmNNNNNNNMNNNmNNNNmMmmmNNNMNNNNNNNNMNNMMMMMNNmdds/-                          
+                             `--:+shddmmNmmmmNNNNMNNNMNNNNNNNNNNMMNMMMNNNmNNNMNNNNdh++/-.`                              
+                                     `--++osdddddddysNmmhshmmmmmNmddddddho/:++/---                                      
+                                                    `-.-. .------.                                 
+
+    </pre>
+
+    <br>  
+    You have successfully completed the game!
+
+    <div class=question id=question-1>
+      How did you like the game overall?<br>
+      <input type=button value="It was awful" onclick="sendFeedbackResponse(1,1)">
+      <input type=button value="Meh" onclick="sendFeedbackResponse(1,2)">
+      <input type=button value="Alright, I suppose" onclick="sendFeedbackResponse(1,3)">
+      <input type=button value="I loved it!" onclick="sendFeedbackResponse(1,4)">
+    </div>
+
+    <div class=question id=question-2>
+      How about the difficulty?<br>
+      <input type=button value="Too easy" onclick="sendFeedbackResponse(2,3)">
+      <input type=button value="Just right" onclick="sendFeedbackResponse(2,2)">
+      <input type=button value="Too hard" onclick="sendFeedbackResponse(2,1)">
+    </div>
+
+    While breaking things is fun, it is also important to know how
+    to prevent XSS. For a gentle introduction to the topic of XSS,
+    take a look at our <a href="//www.google.com/about/appsecurity/learning/xss/index.html">documentation</a>.
+    
+    <br><br>
+    Thanks for playing!
+    </div>
+
+
+
+  </body>
+</html>
+```

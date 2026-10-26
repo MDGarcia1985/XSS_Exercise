@@ -22,7 +22,7 @@ user input already has a "3" in the field
 
 ### index.html
 
-```
+```html
 <!doctype html>
 <html>
   <head>
@@ -44,7 +44,7 @@ user input already has a "3" in the field
 
 ### level.py
 
-```
+```py
 class MainPage(webapp.RequestHandler):
  
   def render_template(self, filename, context={}):
@@ -70,7 +70,7 @@ application = webapp.WSGIApplication([ ('.*', MainPage), ], debug=False)
 
 ### timer.html
 
-```
+```html
 <!doctype html>
 <html>
   <head>
@@ -104,7 +104,7 @@ network/doc/payload "timer=100"
 
 ### Response to random non-integer input
 
-```
+```html
 <!doctype html>
 <html>
   <head>
@@ -133,7 +133,7 @@ network/doc/payload "timer=100"
 ```
 ### Second test using signle quotation mark '
 
-```
+```html
 <!doctype html>
 <html>
   <head>
@@ -164,7 +164,7 @@ The timer is still going after several minutes and I don't think the timer will 
 
 ### Errors encountered
 
-```
+```javascript
 frame?timer=%27:21 Uncaught SyntaxError: missing ) after argument list (at frame?timer=%27:21:79)
 frame?timer=%27:21 Uncaught SyntaxError: missing ) after argument list (at frame?timer=%27:21:79)
 
@@ -175,19 +175,19 @@ Something I missed was that it was requiring me to close the ardument list. So t
 
 So the alert should look like this:
 
-```
+```javascript
 ');alert(1);//
 ```
 
 then the result from the function startTimer() should be
 
-```
+```html
     <img src="/static/loading.gif" onload="startTimer('');alert(1);//');" />
 ```
 
 ### Results
 
-```
+```html
 <!doctype html>
 <html>
   <head>
